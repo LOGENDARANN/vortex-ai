@@ -1,0 +1,667 @@
+
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VORTEX AI Hub</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        vortex: {
+                            bg: '#080c0a',
+                            card: '#0f1713',
+                            border: '#1b2a22',
+                            accent: '#42f59b',
+                            accentHover: '#2fe087',
+                            muted: '#8e9a93'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #080c0a;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080c0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1b2a22;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #42f59b;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: rgba(15, 23, 19, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(66, 245, 155, 0.12);
+        }
+        .glass-input {
+            background: rgba(8, 12, 10, 0.6);
+            border: 1px solid rgba(66, 245, 155, 0.2);
+        }
+        .glass-input:focus {
+            border-color: #42f59b;
+            box-shadow: 0 0 10px rgba(66, 245, 155, 0.25);
+            outline: none;
+        }
+
+        /* Neon Glow Effects */
+        .neon-border {
+            box-shadow: 0 0 15px rgba(66, 245, 155, 0.15);
+        }
+        .neon-glow-btn:hover {
+            box-shadow: 0 0 20px rgba(66, 245, 155, 0.4);
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col md:flex-row overflow-hidden select-none">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-64 glass-panel flex flex-col justify-between p-4 border-r border-vortex-border z-20 shrink-0">
+        <div>
+            <!-- App Logo -->
+            <div class="flex items-center space-x-3 px-2 py-3 mb-6 border-b border-vortex-border/50">
+                <div class="w-10 h-10 rounded-xl bg-vortex-accent/20 flex items-center justify-center border border-vortex-accent text-vortex-accent text-xl">
+                    <i class="fa-solid fa-atom fa-spin" style="animation-duration: 12s;"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-wider text-white flex items-center gap-1.5">
+                        VORTEX <span class="text-xs px-1.5 py-0.5 rounded bg-vortex-accent/20 text-vortex-accent border border-vortex-accent/30">AI</span>
+                    </h1>
+                    <p class="text-xs text-vortex-muted">Multilingual Intelligence</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="space-y-2">
+                <button id="nav-chat-btn" onclick="switchTab('chat')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 bg-vortex-accent/15 text-vortex-accent border border-vortex-accent/30 font-medium">
+                    <i class="fa-solid fa-comments text-lg w-6"></i>
+                    <span>AI Assistant</span>
+                </button>
+                <button id="nav-studio-btn" onclick="switchTab('studio')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 text-vortex-muted hover:text-white hover:bg-white/5 border border-transparent font-medium">
+                    <i class="fa-solid fa-wand-magic-sparkles text-lg w-6"></i>
+                    <span>Photo Studio</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="mt-auto pt-4 border-t border-vortex-border/50 px-2 text-xs text-vortex-muted flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+                <span>Status:</span>
+                <span class="flex items-center gap-1.5 text-vortex-accent font-medium">
+                    <span class="w-2 h-2 rounded-full bg-vortex-accent animate-pulse"></span> Online
+                </span>
+            </div>
+            <p class="text-[10px] text-vortex-muted/60 text-center mt-2">© 2026 VORTEX AI Engine</p>
+        </div>
+    </aside>
+
+    <!-- Main Content View Container -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-vortex-bg relative">
+        
+        <!-- ========================================== -->
+        <!-- VIEW 1: CHAT INTERFACE                     -->
+        <!-- ========================================== -->
+        <section id="chat-view" class="flex-1 flex flex-col h-full overflow-hidden">
+            <!-- Header Bar -->
+            <header class="h-16 glass-panel border-b border-vortex-border px-6 flex items-center justify-between shrink-0">
+                <div class="flex items-center space-x-4">
+                    <button onclick="startNewChat()" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-vortex-card border border-vortex-border hover:border-vortex-accent text-xs font-medium text-white transition-all">
+                        <i class="fa-solid fa-plus text-vortex-accent"></i>
+                        <span>New Conversation</span>
+                    </button>
+                </div>
+
+                <!-- Select Controls -->
+                <div class="flex items-center space-x-3">
+                    <!-- Language Selection Dropdown including Bahasa Melayu and Tamil -->
+                    <div class="relative">
+                        <select id="chat-language" class="glass-input text-xs rounded-lg px-3 py-1.5 text-white appearance-none pr-8 cursor-pointer border-vortex-border">
+                            <option value="Auto Detect" selected>⚡ Auto Detect Language</option>
+                            <option value="Bahasa Melayu">Bahasa Melayu</option>
+                            <option value="Tamil">தமிழ் (Tamil)</option>
+                            <option value="English">English</option>
+                            <option value="Chinese">中文 (Chinese)</option>
+                            <option value="Japanese">日本語 (Japanese)</option>
+                            <option value="Korean">한국어 (Korean)</option>
+                            <option value="Arabic">العربية (Arabic)</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-vortex-muted absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    </div>
+
+                    <!-- AI Model Selector -->
+                    <div class="relative">
+                        <select id="chat-model" class="glass-input text-xs rounded-lg px-3 py-1.5 text-vortex-accent font-medium appearance-none pr-8 cursor-pointer border-vortex-accent/40">
+                            <option value="openai" selected>GPT-4o (Default)</option>
+                            <option value="mistral">Mistral AI</option>
+                            <option value="qwen">Qwen 2.5</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-vortex-accent absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Chat Scroll Area -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
+                <!-- Welcome Message -->
+                <div class="flex items-start space-x-3 max-w-3xl">
+                    <div class="w-8 h-8 rounded-lg bg-vortex-accent/20 flex items-center justify-center border border-vortex-accent text-vortex-accent shrink-0 mt-1">
+                        <i class="fa-solid fa-robot text-sm"></i>
+                    </div>
+                    <div class="glass-panel p-4 rounded-2xl rounded-tl-none text-sm leading-relaxed border-vortex-border max-w-2xl">
+                        <p class="font-semibold text-vortex-accent mb-1">VORTEX Assistant</p>
+                        <p>Selamat datang! வணக்கம்! Welcome! I am VORTEX AI. Ask me anything in Bahasa Melayu, Tamil, English, or any preferred language. You can also upload images for context analysis.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Footer -->
+            <footer class="p-4 border-t border-vortex-border glass-panel shrink-0">
+                <div class="max-w-4xl mx-auto space-y-2">
+                    <!-- Chat Attachment Preview Area -->
+                    <div id="chat-attachment-preview" class="hidden items-center gap-2 p-2 rounded-xl bg-vortex-card border border-vortex-border max-w-xs">
+                        <img id="chat-preview-img" class="w-12 h-12 object-cover rounded-lg border border-vortex-border" src="" alt="Attachment">
+                        <div class="flex-1 overflow-hidden">
+                            <p id="chat-preview-filename" class="text-xs text-white truncate font-medium"></p>
+                            <p class="text-[10px] text-vortex-muted">Image attached</p>
+                        </div>
+                        <button onclick="removeChatAttachment()" class="p-1.5 hover:bg-red-500/20 text-vortex-muted hover:text-red-400 rounded-lg transition-colors">
+                            <i class="fa-solid fa-xmark text-sm"></i>
+                        </button>
+                    </div>
+
+                    <!-- Input Box Bar -->
+                    <div class="flex items-center space-x-2">
+                        <!-- Attachment Upload Button -->
+                        <label class="p-3 rounded-xl glass-input cursor-pointer hover:border-vortex-accent text-vortex-muted hover:text-vortex-accent transition-colors flex items-center justify-center" title="Upload Image for Context">
+                            <i class="fa-solid fa-paperclip text-lg"></i>
+                            <input type="file" id="chat-file-input" class="hidden" accept="image/*" onchange="handleChatFileUpload(event)">
+                        </label>
+
+                        <!-- Input Field -->
+                        <div class="flex-1 relative">
+                            <textarea id="chat-input" rows="1" placeholder="Type your prompt here (eg. Sila terangkan..., எனக்கு உதவி வேண்டும்...)" class="w-full glass-input rounded-xl px-4 py-3 text-sm text-white resize-none max-h-32 focus:ring-0" onkeydown="handleChatKeyDown(event)"></textarea>
+                        </div>
+
+                        <!-- Send Button -->
+                        <button onclick="sendChatMessage()" class="p-3 rounded-xl bg-vortex-accent text-vortex-bg font-bold hover:bg-vortex-accentHover transition-all neon-glow-btn flex items-center justify-center">
+                            <i class="fa-solid fa-paper-plane text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </footer>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 2: PHOTOREALISTIC STUDIO              -->
+        <!-- ========================================== -->
+        <section id="studio-view" class="hidden flex-1 flex-col h-full overflow-y-auto p-4 md:p-6">
+            <div class="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left Control Panel -->
+                <div class="lg:col-span-5 space-y-5">
+                    <div class="glass-panel p-5 rounded-2xl border-vortex-border space-y-4">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-vortex-accent"></i> Generation Settings
+                        </h2>
+
+                        <!-- Prompt Input -->
+                        <div>
+                            <label class="block text-xs font-semibold text-vortex-muted uppercase tracking-wider mb-2">Prompt Input</label>
+                            <textarea id="studio-prompt" rows="3" placeholder="Describe the visual masterpiece you want to create in vivid detail..." class="w-full glass-input rounded-xl p-3 text-sm text-white resize-none"></textarea>
+                        </div>
+
+                        <!-- Reference Image Upload -->
+                        <div>
+                            <label class="block text-xs font-semibold text-vortex-muted uppercase tracking-wider mb-2">Reference Image (Optional)</label>
+                            
+                            <div id="reference-upload-box" class="border-2 border-dashed border-vortex-border hover:border-vortex-accent/50 rounded-xl p-4 text-center cursor-pointer transition-colors relative">
+                                <input type="file" id="reference-file-input" class="hidden" accept="image/*" onchange="handleReferenceUpload(event)">
+                                <label for="reference-file-input" class="cursor-pointer block">
+                                    <i class="fa-solid fa-cloud-arrow-up text-2xl text-vortex-muted mb-2"></i>
+                                    <p class="text-xs text-vortex-muted">Click or drag image to upload reference</p>
+                                </label>
+                            </div>
+
+                            <!-- Reference Thumbnail Preview -->
+                            <div id="reference-preview-box" class="hidden flex items-center justify-between p-2 rounded-xl bg-vortex-card border border-vortex-border mt-2">
+                                <div class="flex items-center space-x-3 overflow-hidden">
+                                    <img id="reference-thumbnail" class="w-12 h-12 object-cover rounded-lg border border-vortex-border" src="" alt="Reference">
+                                    <div class="truncate">
+                                        <p id="reference-filename" class="text-xs text-white truncate font-medium"></p>
+                                        <p class="text-[10px] text-vortex-accent">Reference Active</p>
+                                    </div>
+                                </div>
+                                <button onclick="clearReferenceImage()" class="p-2 text-vortex-muted hover:text-red-400 transition-colors">
+                                    <i class="fa-solid fa-trash-can text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Style Preset Selector -->
+                        <div>
+                            <label class="block text-xs font-semibold text-vortex-muted uppercase tracking-wider mb-2">Style Preset</label>
+                            <div class="relative">
+                                <select id="studio-style" class="w-full glass-input rounded-xl px-3 py-2.5 text-sm text-white appearance-none pr-8 cursor-pointer">
+                                    <option value="photorealistic" selected>Photorealistic Ultra-HD</option>
+                                    <option value="cinematic">Cinematic Movie Shot</option>
+                                    <option value="product">Studio Product Photography</option>
+                                    <option value="3d-render">Octane 3D Render</option>
+                                    <option value="anime">Anime / Cyberpunk Illustration</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down text-xs text-vortex-muted absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                            </div>
+                        </div>
+
+                        <!-- Aspect Ratio Selector -->
+                        <div>
+                            <label class="block text-xs font-semibold text-vortex-muted uppercase tracking-wider mb-2">Aspect Ratio</label>
+                            <div class="grid grid-cols-4 gap-2" id="aspect-ratio-selector">
+                                <button onclick="selectAspectRatio(this, '1:1')" class="aspect-btn active p-2 rounded-xl border border-vortex-accent bg-vortex-accent/20 text-vortex-accent text-xs font-medium text-center">1:1</button>
+                                <button onclick="selectAspectRatio(this, '16:9')" class="aspect-btn p-2 rounded-xl border border-vortex-border bg-vortex-card text-vortex-muted text-xs font-medium text-center hover:border-vortex-accent/50">16:9</button>
+                                <button onclick="selectAspectRatio(this, '9:16')" class="aspect-btn p-2 rounded-xl border border-vortex-border bg-vortex-card text-vortex-muted text-xs font-medium text-center hover:border-vortex-accent/50">9:16</button>
+                                <button onclick="selectAspectRatio(this, '4:3')" class="aspect-btn p-2 rounded-xl border border-vortex-border bg-vortex-card text-vortex-muted text-xs font-medium text-center hover:border-vortex-accent/50">4:3</button>
+                            </div>
+                        </div>
+
+                        <!-- Auto Enhance Toggle -->
+                        <div class="flex items-center justify-between py-1">
+                            <span class="text-xs font-semibold text-vortex-muted uppercase tracking-wider">Auto-Enhance Prompt</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="auto-enhance-toggle" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-vortex-card peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-vortex-accent"></div>
+                            </label>
+                        </div>
+
+                        <!-- Generate Button -->
+                        <button onclick="generateStudioVisual()" class="w-full py-3.5 rounded-xl bg-vortex-accent text-vortex-bg font-bold text-sm tracking-wide hover:bg-vortex-accentHover transition-all neon-glow-btn flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-wand-magic-sparkles text-base"></i>
+                            <span>Generate Visual</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Display Canvas / Output Container -->
+                <div class="lg:col-span-7 flex flex-col">
+                    <div class="glass-panel p-5 rounded-2xl border-vortex-border flex-1 flex flex-col justify-between items-center min-h-[450px] relative overflow-hidden">
+                        
+                        <!-- Initial Placeholder State -->
+                        <div id="studio-placeholder" class="flex flex-col items-center justify-center my-auto text-center p-6 space-y-3">
+                            <div class="w-16 h-16 rounded-full bg-vortex-card border border-vortex-border flex items-center justify-center text-vortex-muted text-2xl">
+                                <i class="fa-regular fa-image"></i>
+                            </div>
+                            <p class="text-sm font-medium text-white">No Visual Generated Yet</p>
+                            <p class="text-xs text-vortex-muted max-w-sm">Enter a prompt and select your style preferences, then hit Generate Visual to render studio-grade output.</p>
+                        </div>
+
+                        <!-- Loading State -->
+                        <div id="studio-loading" class="hidden flex-col items-center justify-center my-auto text-center p-6 space-y-4">
+                            <div class="relative w-16 h-16 flex items-center justify-center">
+                                <div class="absolute inset-0 rounded-full border-2 border-vortex-accent/20 border-t-vortex-accent animate-spin"></div>
+                                <i class="fa-solid fa-atom text-vortex-accent text-xl animate-pulse"></i>
+                            </div>
+                            <p class="text-sm font-semibold text-white animate-pulse">Rendering Image Synthesis...</p>
+                            <p class="text-xs text-vortex-muted">Applying hyper-realistic lighting & neural enhancement</p>
+                        </div>
+
+                        <!-- Rendered Output Area -->
+                        <div id="studio-output-container" class="hidden flex-col items-center justify-center w-full h-full my-auto space-y-4">
+                            <div class="relative group max-w-full overflow-hidden rounded-xl border border-vortex-border bg-black/40">
+                                <img id="studio-output-img" class="max-h-[500px] w-auto object-contain rounded-xl" src="" alt="Generated Visual">
+                            </div>
+
+                            <!-- Action Bar -->
+                            <div class="flex items-center justify-end w-full pt-2">
+                                <button onclick="downloadGeneratedVisual()" class="flex items-center space-x-2 px-4 py-2 rounded-xl bg-vortex-accent/20 text-vortex-accent border border-vortex-accent/40 hover:bg-vortex-accent hover:text-vortex-bg text-xs font-semibold transition-all">
+                                    <i class="fa-solid fa-download"></i>
+                                    <span>Download Visual</span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- App Logic Script -->
+    <script>
+        // Global State Variables
+        let currentTab = 'chat';
+        let currentAspectRatio = '1:1';
+        let chatAttachmentBase64 = null;
+        let chatAttachmentName = '';
+        let currentChatHistory = [];
+
+        // Switching Navigation Tabs
+        function switchTab(tab) {
+            currentTab = tab;
+            const chatView = document.getElementById('chat-view');
+            const studioView = document.getElementById('studio-view');
+            const navChatBtn = document.getElementById('nav-chat-btn');
+            const navStudioBtn = document.getElementById('nav-studio-btn');
+
+            if (tab === 'chat') {
+                chatView.classList.remove('hidden');
+                chatView.classList.add('flex');
+                studioView.classList.add('hidden');
+                studioView.classList.remove('flex');
+
+                navChatBtn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 bg-vortex-accent/15 text-vortex-accent border border-vortex-accent/30 font-medium";
+                navStudioBtn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 text-vortex-muted hover:text-white hover:bg-white/5 border border-transparent font-medium";
+            } else {
+                chatView.classList.add('hidden');
+                chatView.classList.remove('flex');
+                studioView.classList.remove('hidden');
+                studioView.classList.add('flex');
+
+                navStudioBtn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 bg-vortex-accent/15 text-vortex-accent border border-vortex-accent/30 font-medium";
+                navChatBtn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 text-vortex-muted hover:text-white hover:bg-white/5 border border-transparent font-medium";
+            }
+        }
+
+        // ==========================================
+        // CHAT ENGINE & MULTILINGUAL LOGIC
+        // ==========================================
+
+        function startNewChat() {
+            const container = document.getElementById('chat-messages');
+            container.innerHTML = `
+                <div class="flex items-start space-x-3 max-w-3xl">
+                    <div class="w-8 h-8 rounded-lg bg-vortex-accent/20 flex items-center justify-center border border-vortex-accent text-vortex-accent shrink-0 mt-1">
+                        <i class="fa-solid fa-robot text-sm"></i>
+                    </div>
+                    <div class="glass-panel p-4 rounded-2xl rounded-tl-none text-sm leading-relaxed border-vortex-border max-w-2xl">
+                        <p class="font-semibold text-vortex-accent mb-1">VORTEX Assistant</p>
+                        <p>Conversation reset. How can I assist you next?</p>
+                    </div>
+                </div>
+            `;
+            currentChatHistory = [];
+            removeChatAttachment();
+        }
+
+        function handleChatKeyDown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendChatMessage();
+            }
+        }
+
+        function handleChatFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            chatAttachmentName = file.name;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                chatAttachmentBase64 = e.target.result;
+                document.getElementById('chat-preview-img').src = chatAttachmentBase64;
+                document.getElementById('chat-preview-filename').innerText = file.name;
+                document.getElementById('chat-attachment-preview').classList.remove('hidden');
+                document.getElementById('chat-attachment-preview').classList.add('flex');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeChatAttachment() {
+            chatAttachmentBase64 = null;
+            chatAttachmentName = '';
+            document.getElementById('chat-file-input').value = '';
+            document.getElementById('chat-attachment-preview').classList.add('hidden');
+            document.getElementById('chat-attachment-preview').classList.remove('flex');
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const userMsg = input.value.trim();
+            if (!userMsg && !chatAttachmentBase64) return;
+
+            const selectedLanguage = document.getElementById('chat-language').value;
+            const selectedModel = document.getElementById('chat-model').value;
+            const container = document.getElementById('chat-messages');
+
+            // Render User Bubble
+            let userHtml = `
+                <div class="flex items-start justify-end space-x-3 max-w-3xl ml-auto">
+                    <div class="bg-vortex-accent/15 border border-vortex-accent/30 p-4 rounded-2xl rounded-tr-none text-sm leading-relaxed max-w-2xl text-white">
+            `;
+            if (chatAttachmentBase64) {
+                userHtml += `<img src="${chatAttachmentBase64}" class="w-36 h-36 object-cover rounded-lg border border-vortex-border mb-2" />`;
+            }
+            userHtml += `<p>${escapeHtml(userMsg)}</p></div></div>`;
+            
+            container.insertAdjacentHTML('beforeend', userHtml);
+            input.value = '';
+            const tempAttachment = chatAttachmentBase64;
+            removeChatAttachment();
+
+            // Auto Scroll
+            container.scrollTop = container.scrollHeight;
+
+            // Render Loading AI Bubble
+            const aiBubbleId = 'ai-msg-' + Date.now();
+            const loadingHtml = `
+                <div id="${aiBubbleId}" class="flex items-start space-x-3 max-w-3xl">
+                    <div class="w-8 h-8 rounded-lg bg-vortex-accent/20 flex items-center justify-center border border-vortex-accent text-vortex-accent shrink-0 mt-1">
+                        <i class="fa-solid fa-robot text-sm"></i>
+                    </div>
+                    <div class="glass-panel p-4 rounded-2xl rounded-tl-none text-sm leading-relaxed border-vortex-border max-w-2xl">
+                        <p class="font-semibold text-vortex-accent mb-1">VORTEX Assistant</p>
+                        <p class="animate-pulse flex items-center gap-2">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i> Synthesizing dynamic response...
+                        </p>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', loadingHtml);
+            container.scrollTop = container.scrollHeight;
+
+            // Dynamic temporal grounding
+            const currentDateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            
+            // Multilingual Detection Instruction logic
+            let languageInstruction = "";
+            if (selectedLanguage === "Auto Detect") {
+                languageInstruction = "Detect the input language automatically (including Bahasa Melayu, Tamil, English, Chinese, Japanese, Korean, Arabic). You MUST respond in the EXACT SAME detected language as the user's prompt naturally and fluently.";
+            } else if (selectedLanguage === "Bahasa Melayu") {
+                languageInstruction = "Sila berikan jawapan dalam Bahasa Melayu yang betul dan faham.";
+            } else if (selectedLanguage === "Tamil") {
+                languageInstruction = "தயவுசெய்து பதில்களை துல்லியமான மற்றும் தெளிவான தமிழ் மொழியில் வழங்கவும் (Please respond in accurate Tamil).";
+            } else {
+                languageInstruction = `Respond strictly in ${selectedLanguage}.`;
+            }
+
+            let systemContext = `[System Directive: Current Date is ${currentDateStr}. ${languageInstruction}] `;
+            if (tempAttachment) {
+                systemContext += `[User attached image reference: ${chatAttachmentName}] `;
+            }
+            const fullPrompt = systemContext + userMsg;
+
+            // Model Fallback Logic Pipeline
+            const modelsToTry = [selectedModel, 'openai', 'mistral', 'qwen'];
+            let responseText = null;
+
+            for (const model of modelsToTry) {
+                try {
+                    const encodedPrompt = encodeURIComponent(fullPrompt);
+                    const response = await fetch(`https://text.pollinations.ai/${encodedPrompt}?model=${model}`);
+                    if (response.ok) {
+                        responseText = await response.text();
+                        if (responseText && responseText.trim().length > 0) break;
+                    }
+                } catch (err) {
+                    console.warn(`Model ${model} failed, attempting next fallback...`);
+                }
+            }
+
+            const aiBubble = document.getElementById(aiBubbleId);
+            if (responseText) {
+                aiBubble.querySelector('.glass-panel').innerHTML = `
+                    <p class="font-semibold text-vortex-accent mb-1">VORTEX Assistant</p>
+                    <p class="whitespace-pre-wrap">${escapeHtml(responseText)}</p>
+                `;
+            } else {
+                aiBubble.querySelector('.glass-panel').innerHTML = `
+                    <p class="font-semibold text-red-400 mb-1">VORTEX Assistant</p>
+                    <p class="text-red-300">Ralat perkhidmatan. Sila semak sambungan internet anda dan cuba lagi. (Service Error. Please try again.)</p>
+                `;
+            }
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Helper to Escape HTML
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;")
+                      .replace(/</g, "&lt;")
+                      .replace(/>/g, "&gt;")
+                      .replace(/"/g, "&quot;")
+                      .replace(/'/g, "&#039;");
+        }
+
+        // ==========================================
+        // PHOTOREALISTIC STUDIO ENGINE & LOGIC
+        // ==========================================
+
+        function selectAspectRatio(btnElement, ratio) {
+            document.querySelectorAll('#aspect-ratio-selector .aspect-btn').forEach(b => {
+                b.className = "aspect-btn p-2 rounded-xl border border-vortex-border bg-vortex-card text-vortex-muted text-xs font-medium text-center hover:border-vortex-accent/50";
+            });
+            btnElement.className = "aspect-btn active p-2 rounded-xl border border-vortex-accent bg-vortex-accent/20 text-vortex-accent text-xs font-medium text-center";
+            currentAspectRatio = ratio;
+        }
+
+        function handleReferenceUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('reference-thumbnail').src = e.target.result;
+                document.getElementById('reference-filename').innerText = file.name;
+                document.getElementById('reference-upload-box').classList.add('hidden');
+                document.getElementById('reference-preview-box').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearReferenceImage() {
+            document.getElementById('reference-file-input').value = '';
+            document.getElementById('reference-thumbnail').src = '';
+            document.getElementById('reference-preview-box').classList.add('hidden');
+            document.getElementById('reference-upload-box').classList.remove('hidden');
+        }
+
+        async function generateStudioVisual() {
+            const promptInput = document.getElementById('studio-prompt').value.trim();
+            if (!promptInput) {
+                alert("Please enter a visual description prompt.");
+                return;
+            }
+
+            const style = document.getElementById('studio-style').value;
+            const autoEnhance = document.getElementById('auto-enhance-toggle').checked;
+
+            // Show Loading State
+            document.getElementById('studio-placeholder').classList.add('hidden');
+            document.getElementById('studio-output-container').classList.add('hidden');
+            document.getElementById('studio-loading').classList.remove('hidden');
+            document.getElementById('studio-loading').classList.add('flex');
+
+            // Build Enhanced Synthesizer Prompt
+            let finalPrompt = promptInput;
+            
+            if (autoEnhance) {
+                if (style === 'photorealistic') {
+                    finalPrompt += ", 8k resolution, raw photo, highly detailed skin texture, professional studio lighting, shot on 35mm lens, sharp focus, hyperrealistic";
+                } else if (style === 'cinematic') {
+                    finalPrompt += ", cinematic film still, dynamic lighting, dramatic depth of field, blockbuster color grading, 8k resolution";
+                } else if (style === 'product') {
+                    finalPrompt += ", studio product photography, clean background, pristine studio lighting, sharp details, commercial render";
+                } else if (style === '3d-render') {
+                    finalPrompt += ", octane 3d render, ray tracing, unreal engine 5, vivid lighting, ultra detailed";
+                } else if (style === 'anime') {
+                    finalPrompt += ", high quality anime style art, vibrant colors, detailed linework, masterpiece studio quality";
+                }
+            }
+
+            // Aspect Ratio Dimensions
+            let width = 1024;
+            let height = 1024;
+            if (currentAspectRatio === '16:9') { width = 1280; height = 720; }
+            else if (currentAspectRatio === '9:16') { width = 720; height = 1280; }
+            else if (currentAspectRatio === '4:3') { width = 1024; height = 768; }
+
+            const seed = Math.floor(Math.random() * 1000000);
+            const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?width=${width}&height=${height}&seed=${seed}&nologo=true&model=flux`;
+
+            // Load Image with Promise handling
+            const imgElement = document.getElementById('studio-output-img');
+            imgElement.src = imageUrl;
+
+            imgElement.onload = function() {
+                document.getElementById('studio-loading').classList.add('hidden');
+                document.getElementById('studio-loading').classList.remove('flex');
+                document.getElementById('studio-output-container').classList.remove('hidden');
+                document.getElementById('studio-output-container').classList.add('flex');
+            };
+
+            imgElement.onerror = function() {
+                document.getElementById('studio-loading').classList.add('hidden');
+                document.getElementById('studio-loading').classList.remove('flex');
+                document.getElementById('studio-placeholder').classList.remove('hidden');
+                alert("Image synthesis failed. Please adjust prompt or retry.");
+            };
+        }
+
+        function downloadGeneratedVisual() {
+            const img = document.getElementById('studio-output-img');
+            if (!img.src) return;
+
+            const a = document.createElement('a');
+            a.href = img.src;
+            a.download = `VORTEX-Visual-${Date.now()}.jpg`;
+            a.target = "_blank";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>
